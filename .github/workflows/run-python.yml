@@ -11,6 +11,7 @@ on:
 jobs:
   run-python:
     runs-on: ubuntu-latest
+    environment: main
 
     steps:
       - name: Checkout repository
@@ -31,10 +32,9 @@ jobs:
 
       - name: Run Python script
         env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           python laliga_data_migration.py
