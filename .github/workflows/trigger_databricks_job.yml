@@ -1,0 +1,22 @@
+
+name: Trigger Databricks Job
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-job:
+    runs-on: ubuntu-latest
+    environment: main
+
+    steps:
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: TRIGGER BARCA RAW JOB
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          
+        run: |
+          databricks jobs run-now "976815247760789"
