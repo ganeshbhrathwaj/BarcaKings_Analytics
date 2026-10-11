@@ -15,7 +15,7 @@ jobs:
 
       - name: TRIGGER BARCA RAW JOB
         env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           
         run: |
