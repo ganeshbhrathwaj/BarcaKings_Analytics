@@ -3,7 +3,8 @@ name: Trigger Databricks Job
 
 on:
   workflow_dispatch:
-
+  schedule:
+    - cron: '30 3 * * *'
 jobs:
   trigger-job:
     runs-on: ubuntu-latest
