@@ -25,6 +25,7 @@ jobs:
 
   trigger-barca-curated:
       name: Trigger Barca Curated Job
+      needs: trigger-barca-raw
       runs-on: ubuntu-latest
       environment: main
   
