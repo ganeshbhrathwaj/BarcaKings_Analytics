@@ -1,12 +1,13 @@
 
-name: Trigger Databricks Job
+name: Trigger Databricks Football Jobs
 
 on:
   workflow_dispatch:
   schedule:
     - cron: '30 3 * * *'
 jobs:
-  trigger-job:
+  trigger-barca-raw:
+    name: Trigger Barca Raw Job
     runs-on: ubuntu-latest
     environment: main
 
@@ -14,10 +15,27 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      - name: TRIGGER BARCA RAW JOB
+      - name: football_raw_data_extraction
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           
         run: |
           databricks jobs run-now "976815247760789"
+
+  trigger-barca-curated:
+      name: Trigger Barca Curated Job
+      runs-on: ubuntu-latest
+      environment: main
+  
+      steps:
+        - name: Install Databricks CLI
+          uses: databricks/setup-cli@main
+  
+        - name: football_curated_data
+          env:
+            DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+            DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+            
+          run: |
+            databricks jobs run-now "1040308912342202"
