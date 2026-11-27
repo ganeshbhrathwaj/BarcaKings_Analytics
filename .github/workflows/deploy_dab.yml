@@ -23,7 +23,7 @@ jobs:
           version: 1.17.0
 
       - name: Validate Databricks Bundle
-        run: databricks bundle validate -t main
+        run: databricks bundle validate -t dr
 
       - name: Deploy Databricks Bundle
-        run: databricks bundle deploy -t main
+        run: databricks bundle deploy -t dr
