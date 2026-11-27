@@ -1,0 +1,24 @@
+bundle:
+  name: barcakings_analytics
+
+include:
+  - resources/jobs/football_curated_data.job.yml
+  - resources/jobs/football_raw_data_extraction.job.yml
+
+targets:
+
+  main:
+    mode: production
+    default: true
+
+    workspace:
+      host: https://dbc-934e64d2-fbc7.cloud.databricks.com/
+      root_path: /Workspace/BarcaKings
+
+
+  dr:
+    mode: production
+
+    workspace:
+      host: https://dbc-dcbde2dc-7a6b.cloud.databricks.com/
+      root_path: /Workspace/BarcaKings
