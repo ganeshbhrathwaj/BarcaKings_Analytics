@@ -1,0 +1,107 @@
+name: Migrate SQL Scripts
+
+on:
+  push:
+    branches:
+      - main
+      - dr
+    paths:
+      - 'code/consumable/transformation_sql_scripts/*.sql'
+      - 'code/consumable/transformation_sql_scripts/**/*.sql'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-sql:
+    runs-on: ubuntu-latest
+
+    # Select GitHub environment dynamically based on branch
+    environment: ${{ github.ref_name }}
+
+    env:
+      SQL_SOURCE_DIR: code/consumable/transformation_sql_scripts
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+
+      # Step 3: Install Databricks CLI
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      # Step 4: Configure Databricks authentication
+      - name: Configure Databricks credentials
+        run: |
+          echo "DATABRICKS_HOST=${{ vars.DATABRICKS_HOST }}" >> $GITHUB_ENV
+          echo "DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}" >> $GITHUB_ENV
+
+      # Step 5: Identify changed SQL files
+      - name: Identify changed SQL files
+        id: changed-files
+        shell: bash
+        run: |
+          BASE_SHA="${{ github.event.before }}"
+          HEAD_SHA="${{ github.sha }}"
+
+          if [[ "$BASE_SHA" =~ ^0+$ ]]; then
+            BASE_SHA="$(git rev-list --max-parents=0 HEAD)"
+          fi
+
+          git diff --name-only --diff-filter=AMR \
+            "$BASE_SHA" "$HEAD_SHA" \
+            -- "$SQL_SOURCE_DIR" > changed_files.txt
+
+          echo "Changed SQL files:"
+          cat changed_files.txt
+
+          if [ ! -s changed_files.txt ]; then
+            echo "No SQL files to deploy."
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          fi
+
+
+      # Step 7: Import SQL files into Databricks Workspace
+      - name: Deploy SQL files to Databricks Workspace
+        if: steps.changed-files.outputs.has_files == 'true'
+        shell: bash
+        run: |
+          while IFS= read -r FILE; do
+
+            RELATIVE_PATH="${FILE#${SQL_SOURCE_DIR}/}"
+
+            FILE_NAME="${RELATIVE_PATH%.sql}"
+
+            WORKSPACE_DIR="/Workspace/BarcaKings/consumable_framework/transformation_sql_scripts/$(dirname "$FILE_NAME")"
+
+            WORKSPACE_FILE="/Workspace/BarcaKings/consumable_framework/transformation_sql_scripts/${FILE_NAME}"
+
+            echo "Creating workspace directory: $WORKSPACE_DIR"
+
+            databricks workspace mkdirs "$WORKSPACE_DIR"
+
+            echo "Importing $FILE to $WORKSPACE_FILE"
+
+            databricks workspace import "$WORKSPACE_FILE" \
+              --file "$FILE" \
+              --format SOURCE \
+              --language SQL \
+              --overwrite
+
+          done < changed_files.txt
+
+      # Step 8: Deployment summary
+      - name: Deployment summary
+        if: steps.changed-files.outputs.has_files == 'true'
+        run: |
+          echo "SQL deployment completed successfully."
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Environment: ${{ github.ref_name }}"
+          echo "Databricks Workspace: ${{ vars.DATABRICKS_HOST }}"
