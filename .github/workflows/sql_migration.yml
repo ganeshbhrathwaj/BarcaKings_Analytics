@@ -81,7 +81,7 @@ jobs:
 
             WORKSPACE_DIR="/Workspace/BarcaKings/consumable_framework/transformation_sql_scripts/$(dirname "$FILE_NAME")"
 
-            WORKSPACE_FILE="/Workspace/BarcaKings/consumable_framework/transformation_sql_scripts/${FILE_NAME}"
+            WORKSPACE_FILE="/Workspace/BarcaKings/consumable_framework/transformation_sql_scripts/${FILE_NAME}.sql"
 
             echo "Creating workspace directory: $WORKSPACE_DIR"
 
