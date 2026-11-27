@@ -1,6 +1,6 @@
 /*
 SCRIPT NAME    : d_fcb_player_info.sql
-PROJECT        : BarcaKings
+PROJECT        : BarcaKings Analytics
 VERSION        : 1.0
 
 DESCRIPTION:
