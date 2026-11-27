@@ -1,3 +1,22 @@
+/*
+SCRIPT NAME    : d_fcb_player_info.sql
+PROJECT        : BarcaKings
+VERSION        : 1.0
+
+DESCRIPTION:
+    Dimmnention Table for FCB players
+
+SOURCE TABLES:
+    - workspace.bk_curated.fcb_full_squad
+    - workspace.bk_curated.ucl_player_stats_discipline
+
+TARGET TABLES:
+    - workspace.bk_consumable.d_player_info
+
+EXECUTION FREQUENCY:
+    Daily
+*/
+
 SELECT 
     'football'                                                                AS sport,
     TRIM(`metadata_shirt-number`)                                             AS jersey_number,
