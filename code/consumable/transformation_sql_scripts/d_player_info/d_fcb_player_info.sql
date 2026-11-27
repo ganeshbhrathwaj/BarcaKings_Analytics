@@ -14,7 +14,7 @@ TARGET TABLES:
     - workspace.bk_consumable.d_player_info
 
 EXECUTION FREQUENCY:
-    Daily
+    Daily - Truncate & Load
 */
 
 SELECT 
