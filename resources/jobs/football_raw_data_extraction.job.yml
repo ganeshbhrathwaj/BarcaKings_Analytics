@@ -1,0 +1,39 @@
+resources:
+  jobs:
+    football_raw_data_extraction:
+      name: football_raw_data_extraction
+      schedule:
+        quartz_cron_expression: 17 0 9 * * ?
+        timezone_id: Asia/Calcutta
+        pause_status: PAUSED
+      tasks:
+        - task_key: Barca_Raw_Data_Extraction
+          notebook_task:
+            notebook_path: code/raw/raw_api_data_extraction
+            base_parameters:
+              sport: football
+            source: GIT
+          email_notifications:
+            on_failure:
+              - vgganesh99@gmail.com
+          environment_key: Barca_Raw_Data_Extraction_environment
+        - task_key: Api_File_to_UC_Table
+          depends_on:
+            - task_key: Barca_Raw_Data_Extraction
+          notebook_task:
+            notebook_path: code/raw/raw_api_to_uc
+            base_parameters:
+              sport: football
+            source: GIT
+          environment_key: Barca_Raw_Data_Extraction_environment
+      git_source:
+        git_url: https://github.com/ganeshbhrathwaj/BarcaKings_Analytics
+        git_provider: gitHub
+        git_branch: main
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Barca_Raw_Data_Extraction_environment
+          spec:
+            environment_version: "5"
+      performance_target: PERFORMANCE_OPTIMIZED
