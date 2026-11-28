@@ -32,12 +32,13 @@ SELECT
     TRIM(description)                                                         AS description,
     'Fútbol Club Barcelona'                                                   AS team_name,
     'FC Barcelona'                                                            AS team_display_name,
-    'BAR'                                                                     AS team_code
+    'BAR'                                                                     AS team_code,
+    CURRENT_DATE()                                                            AS rec_captured_date
 FROM
-    workspace.bk_curated.fcb_full_squad sqd
+    fcb_full_squad sqd
 LEFT JOIN
-    workspace.bk_curated.fcb_players_stats sts
+    fcb_players_stats sts
     ON sqd.`metadata_shirt-number` = sts.shirt_number
 LEFT JOIN
-    workspace.bk_curated.ucl_player_stats_discipline ucl_dis
+    ucl_player_stats_discipline ucl_dis
     ON ucl_dis.player_clubJerseyNumber = sqd.`metadata_shirt-number`
